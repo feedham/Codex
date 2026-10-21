@@ -1,0 +1,71 @@
+{
+  "name": "bar-member-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local advocate membership manager",
+  "main": "electron.cjs",
+  "scripts": {
+    "start": "node server.cjs",
+    "desktop": "electron .",
+    "dist": "electron-builder --win nsis portable",
+    "dist:portable": "electron-builder --win portable"
+  },
+  "dependencies": {
+    "pdfjs-dist": "4.10.38"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "pk.bar.membermanager",
+    "productName": "Bar Member Manager",
+    "files": [
+      "index.html",
+      "app.css",
+      "extra.css",
+      "app.js",
+      "enrollment.js",
+      "member-list.js",
+      "insight-layout.js",
+      "area-recognition.js",
+      "default-members.json",
+      "member-photos/**/*",
+      "server.cjs",
+      "electron.cjs",
+      "node_modules/pdfjs-dist/**/*",
+      "node_modules/electron/**/*",
+      "assets/**/*",
+      "phone.js",
+      "local-auth.js",
+      "whatsapp-composer.js",
+      "directory-sync.js",
+      "name-gender.js"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "signAndEditExecutable": false,
+      "artifactName": "Bar-Member-Manager-${version}-${arch}.${ext}",
+      "icon": "assets/dbaksr.ico"
+    },
+    "nsis": {
+      "artifactName": "Bar-Member-Manager-${version}-Setup.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "assets/dbaksr.ico",
+      "uninstallerIcon": "assets/dbaksr.ico",
+      "installerHeaderIcon": "assets/dbaksr.ico"
+    },
+    "portable": {
+      "artifactName": "Bar-Member-Manager-${version}-Portable.${ext}"
+    }
+  },
+  "allowScripts": {
+    "electron@33.2.1": true
+  }
+}

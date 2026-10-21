@@ -1,0 +1,26 @@
+INACTIVE: Gmail/phone OTP has been rolled back. Current apps use local email/password authentication. The allowlists and sender setup below are retained only for reference and are not required to sign in.
+
+Approved Gmail signup setup
+
+Approved account source: backend/allowed-gmail-accounts.json
+After edits run: node .tools/sync-gmail-accounts.cjs
+Then rebuild Android and repackage Windows; restart the Chrome app server.
+
+Backend sender settings go in backend/.env only:
+GMAIL_SENDER=your-sender@gmail.com
+GMAIL_APP_PASSWORD=your-private-app-password
+Do not put credentials in any approved-account JSON or app asset.
+Start backend using backend/Start Backend.cmd after changing settings.
+Windows/Chrome: restart the updated app/server so Gmail OTP proxy routes load.
+Android: install app/build/outputs/apk/release/app-release.apk.
+A physical Android phone needs a reachable HTTPS verification backend;
+127.0.0.1:8080 works only with a configured USB adb reverse connection.
+Set the backend URL under Verification server settings on the auth screen.
+
+Create account: first/last name, approved Gmail, and an app password of at
+least six characters. Send verification code, then enter the six-digit code
+received in Gmail. Existing local accounts should use Sign in.
+
+Accounts remain local to each app/device. Approval does not synchronize
+passwords or saved user profiles across devices. The backend validates the
+approved address and Gmail OTP. No SMS authentication is used.

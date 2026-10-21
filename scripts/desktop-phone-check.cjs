@@ -1,0 +1,25 @@
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{
+  const moduleUrl=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
+  const phoneUrl=moduleUrl(fs.readFileSync('desktop/phone.js','utf8'));
+  const phone=await import(phoneUrl);
+  const auth=await import(moduleUrl(fs.readFileSync('desktop/local-auth.js','utf8')));
+  const {mergeDirectoryRows}=await import(moduleUrl(fs.readFileSync('desktop/directory-sync.js','utf8')));
+  assert.equal(phone.whatsappNumber('0300-1234567'),'923001234567');assert.equal(phone.whatsappNumber('+1 (202) 555-0123'),'12025550123');assert.equal(phone.whatsappNumber('invalid'),null);
+  const member={id:'a',name:'Name;\nInjected',firstName:'Name;',lastName:'Last,Name',cell:'0300-1234567'};
+  const cards=phone.contactCards([member,member]);assert.equal(cards.split('BEGIN:VCARD').length,2);assert(cards.includes('Name\\;'));assert(cards.includes('TEL;TYPE=CELL:+923001234567'));
+  assert.throws(()=>phone.contactCards(Array(257).fill(member)));phone.contactCards(Array(256).fill(member));
+  const digest=async password=>({salt:'salt',hash:'hashed:'+password}),fields={first:'First',last:'Last',email:'USER@example.com',password:'secret123'};
+  const pending=await auth.prepareLocalAccount(true,fields,{},digest);assert.equal(pending.user.email,'user@example.com');assert(!pending.user.emailVerifiedAt);assert(!pending.user.phoneNumber);
+  const users={[pending.user.email]:pending.user};
+  await assert.rejects(auth.prepareLocalAccount(true,fields,users,digest));
+  await assert.rejects(auth.prepareLocalAccount(false,{...fields,password:'wrong'},users,digest));
+  await assert.rejects(auth.prepareLocalAccount(true,{...fields,email:'invalid'},{},digest));
+  await assert.rejects(auth.prepareLocalAccount(true,{...fields,first:''},{},digest));
+  const legacy={...pending.user,photo:'existing-photo'};delete legacy.recoveryHash;delete legacy.recoverySalt;
+  const migrated=await auth.prepareLocalAccount(false,fields,{[legacy.email]:legacy},digest);assert.equal(migrated.user.hash,legacy.hash);assert.equal(migrated.user.photo,legacy.photo);assert(migrated.recoveryCode);
+  const old={...member,stableKey:'member:1',called:true,status:'My Voter',referenceName:'Reference',area:'Local',photo:'local.jpg'};
+  const merged=mergeDirectoryRows([old,{id:'local-only',name:'Local'}],[{id:'member:1',name:'Fresh source',cell:'0300',doe:'2020-01-01'}]);
+  assert.equal(merged[0].id,'a');assert.equal(merged[0].called,true);assert.equal(merged[0].referenceName,'Reference');assert.equal(merged[1].id,'local-only');
+  console.log('PASS: local signup/sign-in, 256-contact export, legacy account preservation, password checks, and directory merges.');
+})().catch(error=>{console.error(error);process.exitCode=1;});
