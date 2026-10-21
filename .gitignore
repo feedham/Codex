@@ -1,0 +1,56 @@
+# Local tooling and build outputs
+.gradle/
+.kotlin/
+.tools/
+**/build/
+build/
+desktop/dist/
+node_modules/
+**/node_modules/
+desktop/.npmcache/
+releases/
+
+# Machine settings, credentials and signing material
+local.properties
+keystore.properties
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+.codex/
+.agents/
+.aws/
+
+# Private directory data and generated exports (provision locally)
+AdvocatesListofDBAKSR2025.pdf
+sample-page.png
+app/src/main/assets/default-members.json
+app/src/main/assets/member-photos/
+desktop/default-members.json
+desktop/member-photos/
+backend/data/
+backend/generated/
+**/allowed-gmail-accounts.json
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Temporary previews and editor files
+desktop/.*preview.html
+.vs/
+.idea/
+*.log
+# Credit portraits also stay local in this public repository
+AdvFahmeedShaukat.png
+AdvMAttique.png
+app/src/main/res/drawable-nodpi/adv_fahmeed_shaukat.png
+app/src/main/res/drawable-nodpi/adv_m_attique.png
+desktop/assets/AdvFahmeedShaukat.png
+desktop/assets/AdvMAttique.png
